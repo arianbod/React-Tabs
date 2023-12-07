@@ -1,13 +1,17 @@
 import { useEffect, useState } from 'react';
 const url = 'https://course-api.com/react-tabs-project';
 
-import TabsList from './components/TabsList';
 import Loading from './components/Loading';
 import JobInfo from './components/JobInfo';
+import JobDetail from './components/JobDetail';
 const App = () => {
 	const [isLoadingState, setIsLoadingState] = useState(true);
 	const [dataState, setDataState] = useState(null);
 	const [errorState, setErrorState] = useState(null);
+	const [jobIdState, setJobIdState] = useState('recAGJfiU4CeaV0HL');
+	const SetjobIdFunction = (x) => {
+		setJobIdState(x);
+	};
 	const getData = async () => {
 		setIsLoadingState(true);
 		try {
@@ -26,11 +30,26 @@ const App = () => {
 	useEffect(() => {
 		getData();
 	}, []);
-	useEffect(() => {}, [dataState]);
+	useEffect(() => {
+		{
+			if (dataState) {
+				const FilteredData = dataState.filter((job) => job.id === jobIdState);
+				console.log('data equal to ', FilteredData[0]);
+			}
+		}
+	}, [dataState]);
 	return (
 		<main>
 			{isLoadingState && <Loading />}
-			{dataState && <JobInfo dataState={dataState} />}
+			{!isLoadingState && dataState && (
+				<section className='jobs-center'>
+					<JobInfo
+						dataState={dataState}
+						SetjobIdFunction={SetjobIdFunction}
+					/>
+					<JobDetail data={dataState.filter((job) => job.id == jobIdState)} />
+				</section>
+			)}
 			{errorState && <div> Error Loading data: {errorState.message}</div>}
 		</main>
 	);

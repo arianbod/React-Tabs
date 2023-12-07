@@ -1,15 +1,22 @@
 import React from 'react';
-import TabsList from './TabsList';
-const JobInfo = ({ dataState }) => {
+import JobDetail from './JobDetail';
+const JobInfo = ({ dataState, SetjobIdFunction }) => {
 	const TabsListData = dataState.map((item) => ({
 		company: item.company,
 		id: item.id,
 	}));
 	console.log(TabsListData);
 	return (
-		<section className='jobs-center'>
-			<TabsList TabListData={TabsListData} />
-		</section>
+		<div className='btn-container'>
+			{TabsListData.map((item) => (
+				<button
+					className='job-btn active-btn'
+					key={item.id}
+					onClick={() => SetjobIdFunction()}>
+					{item.company}
+				</button>
+			))}
+		</div>
 	);
 };
 
