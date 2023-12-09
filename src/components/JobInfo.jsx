@@ -1,22 +1,23 @@
 import React from 'react';
-import JobDetail from './JobDetail';
-const JobInfo = ({ dataState, SetjobIdFunction }) => {
-	const TabsListData = dataState.map((item) => ({
-		company: item.company,
-		id: item.id,
-	}));
-	console.log(TabsListData);
+import Duties from './Duties';
+import BtnContainer from './BtnContainer';
+const JobInfo = ({ jobsData, currentItem, setJobFunction }) => {
+	const selectedJobData = jobsData.find((item) => currentItem === item.id);
+	console.log(selectedJobData);
 	return (
-		<div className='btn-container'>
-			{TabsListData.map((item) => (
-				<button
-					className='job-btn active-btn'
-					key={item.id}
-					onClick={() => SetjobIdFunction()}>
-					{item.company}
-				</button>
-			))}
-		</div>
+		<>
+			<BtnContainer
+				jobsData={jobsData}
+				setJobFunction={setJobFunction}
+				currentItem={currentItem}
+			/>
+			<article className='job-info'>
+				<h3>{selectedJobData.title}</h3>
+				<span className='job-company'>{selectedJobData.company}</span>
+				<p className='job-date'>{selectedJobData.dates}</p>
+				<Duties duties={selectedJobData.duties} />
+			</article>
+		</>
 	);
 };
 

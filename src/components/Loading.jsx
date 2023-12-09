@@ -1,11 +1,7 @@
 import React from 'react';
 
 const Loading = () => {
-	return (
-		<section className='jobs-center'>
-			<div className='loading'></div>
-		</section>
-	);
+	return <div className='laoding'>Loading</div>;
 };
 
 export default Loading;

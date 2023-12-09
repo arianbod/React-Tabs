@@ -1,57 +1,47 @@
-import { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 const url = 'https://course-api.com/react-tabs-project';
-
 import Loading from './components/Loading';
+import Error from './components/Error';
 import JobInfo from './components/JobInfo';
-import JobDetail from './components/JobDetail';
 const App = () => {
-	const [isLoadingState, setIsLoadingState] = useState(true);
 	const [dataState, setDataState] = useState(null);
+	const [currentItemState, setCurrentItemState] = useState('recAGJfiU4CeaV0HL');
 	const [errorState, setErrorState] = useState(null);
-	const [jobIdState, setJobIdState] = useState('recAGJfiU4CeaV0HL');
-	const SetjobIdFunction = (x) => {
-		setJobIdState(x);
-	};
-	const getData = async () => {
-		setIsLoadingState(true);
+	const [isLoadingState, setIsLoadingState] = useState(true);
+	const fetchData = async () => {
 		try {
 			const response = await fetch(url);
 			if (!response.ok) {
-				throw new Error('Data Fetched failed');
+				throw new Error(`Error has been occured ${response.message}`);
 			}
 			const fetchedData = await response.json();
 			setDataState(fetchedData);
 			setIsLoadingState(false);
 		} catch (error) {
 			setErrorState(error);
-			console.error(error);
 		}
 	};
-	useEffect(() => {
-		getData();
-	}, []);
-	useEffect(() => {
-		{
-			if (dataState) {
-				const FilteredData = dataState.filter((job) => job.id === jobIdState);
-				console.log('data equal to ', FilteredData[0]);
-			}
-		}
-	}, [dataState]);
+	useEffect(() => fetchData, []);
+	useEffect(() => console.log(dataState), [dataState]);
+	const setJobFunction = (jobId) => {
+		setCurrentItemState(jobId);
+	};
+	if (errorState) return <Error />;
+	if (isLoadingState)
+		return (
+			<section className='jobs-center'>
+				<Loading />
+			</section>
+		);
 	return (
-		<main>
-			{isLoadingState && <Loading />}
-			{!isLoadingState && dataState && (
-				<section className='jobs-center'>
-					<JobInfo
-						dataState={dataState}
-						SetjobIdFunction={SetjobIdFunction}
-					/>
-					<JobDetail data={dataState.filter((job) => job.id == jobIdState)} />
-				</section>
-			)}
-			{errorState && <div> Error Loading data: {errorState.message}</div>}
-		</main>
+		<section className='jobs-center'>
+			<JobInfo
+				jobsData={dataState}
+				currentItem={currentItemState}
+				setJobFunction={setJobFunction}
+			/>
+		</section>
 	);
 };
+
 export default App;
